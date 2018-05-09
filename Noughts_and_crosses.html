@@ -14,8 +14,9 @@
 
         .state {
             width: 170px;
-            height: 100px;
+            height: 230px;
             font-size: 15px;
+            font-weight: bold;
             border: 1px solid black;
             text-align: center;
         }
@@ -23,6 +24,10 @@
         #state_caption {
             font-weight: bold;
             font-size: 20px;
+            margin: 10px;
+        }
+
+        .buttons button {
             margin: 10px;
         }
 
@@ -47,6 +52,11 @@
     <div class="state">
         <div id="state_caption">Состояние игры</div>
         <div id="state_move"></div>
+        <div class="buttons">
+        <button>Начать игру с другом</button>
+        <button>Начать игру с ботом (крестики)</button>
+        <button>Начать игру с ботом (нолики)</button>
+    </div>
     </div>
 
     <table id="main_square">
