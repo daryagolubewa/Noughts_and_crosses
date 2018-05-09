@@ -30,12 +30,11 @@
         .buttons button {
             margin: 10px;
         }
-
-        #main_square {
+        .main_square {
             margin: 0 auto;
         }
 
-        #main_square td {
+        .main_square td {
             width: 100px;
             height: 100px;
             border: 1px solid black;
@@ -59,7 +58,7 @@
     </div>
     </div>
 
-    <table id="main_square">
+    <table class="main_square">
         <tr>
             <td></td>
             <td></td>
@@ -192,7 +191,9 @@
     Game.STATE_MOVE_NOU = 2;
     Game.STATE_DRAW = 0;
     Game.STATE_WIN_CROSS = 3;
-    Game.STATE_WIN_NOU = 4;//состояние игры
+    Game.STATE_WIN_NOU = 4;
+    Game.STATE_BEGIN = 5;
+    Game.STATE_END = 6; //состояние игры
 
 
     $('td').click(function () {
