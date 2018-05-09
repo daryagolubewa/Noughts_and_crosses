@@ -5,23 +5,36 @@
     <meta charset="UTF-8">
     <title>Noughts_and_crosses</title>
 
-<style>
+    <style>
 
-    #main_square {
-        margin: 0 auto;
-    }
+        #state {
+            width: 50px;
+            height: 60px;
+            border: 1px solid black;
+            font-size: 20px;
+            text-align: center;
+        }
 
-    #main_square td {
-        width: 100px;
-        height: 100px;
-        border: 1px solid black;
+        #main_square {
+            margin: 0 auto;
+        }
 
-    }
+        #main_square td {
+            width: 100px;
+            height: 100px;
+            border: 1px solid black;
+            font-size: 40px;
+            text-align: center;
+        }
 
-</style>
+
+    </style>
 </head>
 <body>
-<table id="main_square" >
+
+<div id="state"></div>
+
+<table id="main_square">
     <tr>
         <td></td>
         <td></td>
@@ -41,9 +54,129 @@
 
 <script>
 
-    $(document).ready(function(){
-        $('#main_square');
+    class Game {
+        constructor() {
+            let empty = Cell.EMPTY;
+            this.gamefield = [
+                [empty, empty, empty],
+                [empty, empty, empty],
+                [empty, empty, empty],
+            ];
+            this.gameState = Game.STATE_MOVE_CROSS;
+        }
+
+        userMove(x, y) {
+            if (this.getCellContent(x, y) !== Cell.EMPTY) {
+                return;
+            }
+
+            if (this.gameState === Game.STATE_MOVE_CROSS) {
+                this.gamefield[x][y] = Cell.CROSS;
+                $('tr:eq( ' + y + ')').find('td:eq(' + x + ')').html('x');
+                this.gameState = Game.STATE_MOVE_NOU;
+                if (this.isWin(Cell.CROSS)) {
+                    this.gameState = Game.STATE_WIN_CROSS;
+                } else if (this.isAvailableTurns()) {
+                   this.gameState = Game.STATE_MOVE_NOU;
+                } else {
+                    this.gameState = Game.STATE_DRAW;
+                }
+            }
+            else if (this.gameState === Game.STATE_MOVE_NOU) {
+                this.gamefield[x][y] = Cell.NOU;
+                $('tr:eq( ' + y + ')').find('td:eq(' + x + ')').html('0');
+                this.gameState = Game.STATE_MOVE_CROSS;
+                if (this.isWin(Cell.NOU)) {
+                    this.gameState = Game.STATE_WIN_NOU
+                } else if (this.isAvailableTurns()) {
+                    this.gameState = Game.STATE_MOVE_CROSS;
+                } else {
+                    this.gameState = Game.STATE_DRAW;
+                }
+            }
+
+            switch(this.gameState) {
+                case Game.STATE_MOVE_CROSS:
+                    $('#state').text('Ход крестиков');
+                    break;
+                case Game.STATE_MOVE_NOU:
+                    $('#state').text('Ход ноликов');
+                    break;
+                case Game.STATE_WIN_CROSS:
+                    $('#state').text('Победа крестиков');
+                    break;
+                case Game.STATE_WIN_NOU:
+                    $('#state').text('Победа ноликов');
+                    break;
+                case Game.STATE_DRAW:
+                    $('#state').text('Ничья');
+                    break;
+            }
+        }
+
+        getCellContent(x, y) {
+            return this.gamefield[x][y];
+        }
+
+        isWin(state) {
+            for (let i = 0; i < 3; i++) {
+                if (this.gamefield[0][i] === state && this.gamefield[1][i] === state && this.gamefield[2][i] === state) {
+                return true;
+                }
+            }
+
+            for (let i = 0; i < 3; i++) {
+                if (this.gamefield[i][0] === state && this.gamefield[i][1] === state && this.gamefield[i][2] === state) {
+                    return true;
+                }
+            }
+
+            if (this.gamefield[0][0] === state && this.gamefield[1][1] === state && this.gamefield[2][2] === state) {
+                return true;
+            }
+
+            if (this.gamefield[2][2] === state && this.gamefield[1][1] === state && this.gamefield[0][0] === state) {
+                return true;
+            }
+
+        }
+
+        isAvailableTurns() {
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    if (this.gamefield[i][j] === Cell.EMPTY) {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+
+
+    class Cell {
+
+    }
+
+    Cell.EMPTY = 0;
+    Cell.CROSS = 1;
+    Cell.NOU = 2; //состояние/содержание клетки
+
+    Game.STATE_MOVE_CROSS = 1;
+    Game.STATE_MOVE_NOU = 2;
+    Game.STATE_DRAW = 0;
+    Game.STATE_WIN_CROSS = 3;
+    Game.STATE_WIN_NOU = 4;//состояние игры
+
+
+    $('td').click(function () {
+        let x = $(this).index();
+        let y = $(this).parent('tr').index();
+        game.userMove(x, y);
+
     });
+
+    let game = new Game();
+
 
 </script>
 
