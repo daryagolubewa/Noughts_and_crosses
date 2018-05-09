@@ -7,12 +7,23 @@
 
     <style>
 
-        #state {
-            width: 50px;
-            height: 60px;
+        .main_container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .state {
+            width: 170px;
+            height: 100px;
+            font-size: 15px;
             border: 1px solid black;
-            font-size: 20px;
             text-align: center;
+        }
+
+        #state_caption {
+            font-weight: bold;
+            font-size: 20px;
+            margin: 10px;
         }
 
         #main_square {
@@ -27,30 +38,35 @@
             text-align: center;
         }
 
-
     </style>
 </head>
 <body>
 
-<div id="state"></div>
+<div class="main_container">
 
-<table id="main_square">
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-</table>
+    <div class="state">
+        <div id="state_caption">Состояние игры</div>
+        <div id="state_move"></div>
+    </div>
+
+    <table id="main_square">
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
+</div>
 
 <script>
 
@@ -95,21 +111,22 @@
                 }
             }
 
-            switch(this.gameState) {
+            let state = $('#state_move');
+            switch (this.gameState) {
                 case Game.STATE_MOVE_CROSS:
-                    $('#state').text('Ход крестиков');
+                    state.text('Ход крестиков');
                     break;
                 case Game.STATE_MOVE_NOU:
-                    $('#state').text('Ход ноликов');
+                    state.text('Ход ноликов');
                     break;
                 case Game.STATE_WIN_CROSS:
-                    $('#state').text('Победа крестиков');
+                    state.text('Победа крестиков');
                     break;
                 case Game.STATE_WIN_NOU:
-                    $('#state').text('Победа ноликов');
+                    state.text('Победа ноликов');
                     break;
                 case Game.STATE_DRAW:
-                    $('#state').text('Ничья');
+                    state.text('Ничья');
                     break;
             }
         }
