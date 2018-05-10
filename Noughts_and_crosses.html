@@ -52,7 +52,7 @@
         <div id="state_caption">Состояние игры</div>
         <div id="state_move"></div>
         <div class="buttons">
-        <button>Начать игру с другом</button>
+        <button id="button_play">Начать игру с другом</button>
         <button>Начать игру с ботом (крестики)</button>
         <button>Начать игру с ботом (нолики)</button>
     </div>
@@ -88,6 +88,7 @@
                 [empty, empty, empty],
             ];
             this.gameState = Game.STATE_MOVE_CROSS;
+
         }
 
         userMove(x, y) {
@@ -192,16 +193,24 @@
     Game.STATE_DRAW = 0;
     Game.STATE_WIN_CROSS = 3;
     Game.STATE_WIN_NOU = 4;
-    Game.STATE_BEGIN = 5;
-    Game.STATE_END = 6; //состояние игры
+    Game.STATE_NO_PLAY = 5;
+    Game.STATE_BEFORE_START = 6;
+    Game.STATE_PLAY_PERSON = 7;
+    Game.STATE_PLAY_BOT_CROSS = 8;
+    Game.STATE_PLAY_BOT_NOU = 9; //состояние игры
 
 
-    $('td').click(function () {
-        let x = $(this).index();
-        let y = $(this).parent('tr').index();
-        game.userMove(x, y);
+    $('#button_play').click(function(){
 
+        if(this.gameState !== Game.STATE_BEFORE_START) {
+            $('td').click(function () {
+                let x = $(this).index();
+                let y = $(this).parent('tr').index();
+                game.userMove(x, y);
+            });
+        }
     });
+
 
     let game = new Game();
 
