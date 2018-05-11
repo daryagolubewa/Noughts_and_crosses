@@ -88,10 +88,12 @@
                 [empty, empty, empty],
             ];
             this.gameState = Game.STATE_MOVE_CROSS;
-
+            this.gameOption = null;
         }
 
         userMove(x, y) {
+            if(this.gameOption === Game.OPTION_PLAY_PERSON) {
+
             if (this.getCellContent(x, y) !== Cell.EMPTY) {
                 return;
             }
@@ -119,6 +121,7 @@
                 } else {
                     this.gameState = Game.STATE_DRAW;
                 }
+            }
             }
 
             let state = $('#state_move');
@@ -195,9 +198,9 @@
     Game.STATE_WIN_NOU = 4;
     Game.STATE_NO_PLAY = 5;
     Game.STATE_BEFORE_START = 6;
-    Game.STATE_PLAY_PERSON = 7;
-    Game.STATE_PLAY_BOT_CROSS = 8;
-    Game.STATE_PLAY_BOT_NOU = 9; //состояние игры
+    Game.OPTION_PLAY_PERSON = 7;
+    Game.OPTION_PLAY_BOT_CROSS = 8;
+    Game.OPTION_PLAY_BOT_NOU = 9; //состояние игры
 
 
     $('#button_play').click(function(){
