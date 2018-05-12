@@ -180,7 +180,22 @@
                 }
             }
         }
+
+        findRandomEmptyCell() {
+
+
+        }
+
+
+        findRandomNumber() {
+                let min = 0;
+                let max = 2;
+                let rand = min + Math.random() * (max + 1 - min);
+                rand = Math.floor(rand);
+                return rand;
+        }
     }
+
 
 
     class Cell {
@@ -196,7 +211,7 @@
     Game.STATE_DRAW = 0;
     Game.STATE_WIN_CROSS = 3;
     Game.STATE_WIN_NOU = 4;
-    Game.STATE_NO_PLAY = 5;
+   // Game.STATE_NO_PLAY = 5;
     Game.STATE_BEFORE_START = 6;
     Game.OPTION_PLAY_PERSON = 7;
     Game.OPTION_PLAY_BOT_CROSS = 8;
@@ -216,6 +231,9 @@
 
 
     let game = new Game();
+
+    console.log(game.findRandomEmptyCell());
+
 
 
 </script>
