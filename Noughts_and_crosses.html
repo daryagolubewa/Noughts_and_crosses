@@ -93,7 +93,7 @@
 
         userMove(x, y) {
             if(this.gameOption === Game.OPTION_PLAY_PERSON) {
-
+ t
             if (this.getCellContent(x, y) !== Cell.EMPTY) {
                 return;
             }
@@ -182,8 +182,11 @@
         }
 
         findRandomEmptyCell() {
-
-
+            let x =  this.findRandomNumber();
+            let y = this.findRandomNumber();
+            if (this.gamefield[x][y] === Cell.EMPTY) {
+                return [x, y];
+            }
         }
 
 
