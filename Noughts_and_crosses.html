@@ -87,19 +87,17 @@
                 [empty, empty, empty],
                 [empty, empty, empty],
             ];
-            this.gameState = Game.STATE_MOVE_CROSS;
+            this.gameState = Game.STATE_BEFORE_START;
             this.gameOption = null;
         }
 
         userMove(x, y) {
-            if(this.gameOption === Game.OPTION_PLAY_PERSON) {
 
             if (this.getCellContent(x, y) !== Cell.EMPTY) {
                 return;
             }
 
             if (this.gameState === Game.STATE_MOVE_CROSS) {
-                if (this.gameOption === Game.OPTION_PLAY_PERSON) {
                     this.gamefield[x][y] = Cell.CROSS;
                     $('tr:eq( ' + y + ')').find('td:eq(' + x + ')').html('x');
                     this.gameState = Game.STATE_MOVE_NOU;
@@ -108,29 +106,31 @@
                     } else if (this.isAvailableTurns()) {
                         this.gameState = Game.STATE_MOVE_NOU;
                         if (this.gameOption === Game.OPTION_PLAY_BOT_NOU) {
-                            let x = this.findRandomEmptyCell;
-                            let y = this.findRandomEmptyCell;
-                            this.userMove(x.x, y.y);
+                            let coords = this.findRandomEmptyCell();
+                            this.userMove(coords.x, coords.y);
                         }
                     } else {
                         this.gameState = Game.STATE_DRAW;
                     }
-                }
+
             }
             else if (this.gameState === Game.STATE_MOVE_NOU) {
-
-                this.gamefield[x][y] = Cell.NOU;
-                $('tr:eq( ' + y + ')').find('td:eq(' + x + ')').html('0');
-                this.gameState = Game.STATE_MOVE_CROSS;
-                if (this.isWin(Cell.NOU)) {
-                    this.gameState = Game.STATE_WIN_NOU
-                } else if (this.isAvailableTurns()) {
+                    this.gamefield[x][y] = Cell.NOU;
+                    $('tr:eq( ' + y + ')').find('td:eq(' + x + ')').html('0');
                     this.gameState = Game.STATE_MOVE_CROSS;
-                } else {
-                    this.gameState = Game.STATE_DRAW;
-                }
+                    if (this.isWin(Cell.NOU)) {
+                        this.gameState = Game.STATE_WIN_NOU
+                    } else if (this.isAvailableTurns()) {
+                        this.gameState = Game.STATE_MOVE_CROSS;
+                        if (this.gameOption === Game.OPTION_PLAY_BOT_CROSS) {
+                            let coords = this.findRandomEmptyCell();
+                            this.userMove(coords.x, coords.y);
+                        }
+                    } else {
+                        this.gameState = Game.STATE_DRAW;
+                    }
             }
-            }
+
 
             let state = $('#state_move');
             switch (this.gameState) {
@@ -190,10 +190,11 @@
         }
 
         findRandomEmptyCell() {
-            let x = this.findRandomNumber();
-            let y = this.findRandomNumber();
+            let x, y;
            do {
-           } while (this.getCellContent(x, y) === Cell.EMPTY);
+               x = this.findRandomNumber();
+               y = this.findRandomNumber();
+           } while (this.getCellContent(x, y) !== Cell.EMPTY);
             return {'x': x, 'y': y};
             }
 
@@ -219,38 +220,46 @@
     Game.STATE_DRAW = 0;
     Game.STATE_WIN_CROSS = 3;
     Game.STATE_WIN_NOU = 4;
-   // Game.STATE_NO_PLAY = 5;
+    //Game.STATE_BEGIN = 5;
     Game.STATE_BEFORE_START = 6;
     Game.OPTION_PLAY_PERSON = 7;
     Game.OPTION_PLAY_BOT_CROSS = 8;
     Game.OPTION_PLAY_BOT_NOU = 9; //состояние игры
 
+    let game = new Game();
 
-    $('.buttons').click(function(){
-        switch($(this).attr('data-button_play')) {
-            case 'person':
-                this.gameOption = Game.OPTION_PLAY_PERSON;
-                break;
-            case 'bot_cross':
-                this.gameOption = Game.OPTION_PLAY_BOT_CROSS;
-                break;
-            case 'bot_nou':
-                this.gameOption = Game.OPTION_PLAY_BOT_NOU;
-                break;
+    $('.buttons > button').click(function(){
+        if(game.gameState === Game.STATE_BEFORE_START) {
+            switch ($(this).attr('data-button_play')) {
+                case 'person':
+                    game.gameOption = Game.OPTION_PLAY_PERSON;
+                    game.gameState = Game.STATE_MOVE_CROSS;
+                    break;
+                case 'bot_cross':
+                    game.gameOption = Game.OPTION_PLAY_BOT_CROSS;
+                    game.gameState = Game.STATE_MOVE_CROSS;
+                    let coords = game.findRandomEmptyCell();
+                    game.userMove(coords.x, coords.y);
+                    break;
+                case 'bot_nou':
+                    game.gameOption = Game.OPTION_PLAY_BOT_NOU;
+                    game.gameState = Game.STATE_MOVE_CROSS;
+                    break;
+            }
         }
+        $('.buttons').hide();
     });
 
         $('td').click(function () {
-        if(this.gameState !== Game.STATE_BEFORE_START) {
+        if(game.gameState !== Game.STATE_BEFORE_START) {
                 let x = $(this).index();
                 let y = $(this).parent('tr').index();
                 game.userMove(x, y);
             }
         });
 
-    let game = new Game();
 
-    console.log(game.findRandomEmptyCell());
+
 
 
 
