@@ -52,9 +52,9 @@
         <div id="state_caption">Состояние игры</div>
         <div id="state_move"></div>
         <div class="buttons">
-        <button id="button_play">Начать игру с другом</button>
-        <button>Начать игру с ботом (крестики)</button>
-        <button>Начать игру с ботом (нолики)</button>
+        <button data-button_play="person">Начать игру с другом</button>
+        <button data-button_play="bot_cross">Начать игру с ботом (крестики)</button>
+        <button data-button_play="bot_nou">Начать игру с ботом (нолики)</button>
     </div>
     </div>
 
@@ -99,18 +99,26 @@
             }
 
             if (this.gameState === Game.STATE_MOVE_CROSS) {
-                this.gamefield[x][y] = Cell.CROSS;
-                $('tr:eq( ' + y + ')').find('td:eq(' + x + ')').html('x');
-                this.gameState = Game.STATE_MOVE_NOU;
-                if (this.isWin(Cell.CROSS)) {
-                    this.gameState = Game.STATE_WIN_CROSS;
-                } else if (this.isAvailableTurns()) {
-                   this.gameState = Game.STATE_MOVE_NOU;
-                } else {
-                    this.gameState = Game.STATE_DRAW;
+                if (this.gameOption === Game.OPTION_PLAY_PERSON) {
+                    this.gamefield[x][y] = Cell.CROSS;
+                    $('tr:eq( ' + y + ')').find('td:eq(' + x + ')').html('x');
+                    this.gameState = Game.STATE_MOVE_NOU;
+                    if (this.isWin(Cell.CROSS)) {
+                        this.gameState = Game.STATE_WIN_CROSS;
+                    } else if (this.isAvailableTurns()) {
+                        this.gameState = Game.STATE_MOVE_NOU;
+                        if (this.gameOption === Game.OPTION_PLAY_BOT_NOU) {
+                            let x = this.findRandomEmptyCell;
+                            let y = this.findRandomEmptyCell;
+                            this.userMove(x.x, y.y);
+                        }
+                    } else {
+                        this.gameState = Game.STATE_DRAW;
+                    }
                 }
             }
             else if (this.gameState === Game.STATE_MOVE_NOU) {
+
                 this.gamefield[x][y] = Cell.NOU;
                 $('tr:eq( ' + y + ')').find('td:eq(' + x + ')').html('0');
                 this.gameState = Game.STATE_MOVE_CROSS;
@@ -186,7 +194,7 @@
             let y = this.findRandomNumber();
            do {
            } while (this.getCellContent(x, y) === Cell.EMPTY);
-                return [x, y];
+            return {'x': x, 'y': y};
             }
 
         findRandomNumber() {
@@ -218,17 +226,27 @@
     Game.OPTION_PLAY_BOT_NOU = 9; //состояние игры
 
 
-    $('#button_play').click(function(){
-
-        if(this.gameState !== Game.STATE_BEFORE_START) {
-            $('td').click(function () {
-                let x = $(this).index();
-                let y = $(this).parent('tr').index();
-                game.userMove(x, y);
-            });
+    $('.buttons').click(function(){
+        switch($(this).attr('data-button_play')) {
+            case 'person':
+                this.gameOption = Game.OPTION_PLAY_PERSON;
+                break;
+            case 'bot_cross':
+                this.gameOption = Game.OPTION_PLAY_BOT_CROSS;
+                break;
+            case 'bot_nou':
+                this.gameOption = Game.OPTION_PLAY_BOT_NOU;
+                break;
         }
     });
 
+        $('td').click(function () {
+        if(this.gameState !== Game.STATE_BEFORE_START) {
+                let x = $(this).index();
+                let y = $(this).parent('tr').index();
+                game.userMove(x, y);
+            }
+        });
 
     let game = new Game();
 
