@@ -27,9 +27,14 @@
             margin: 10px;
         }
 
+        #button_new_game {
+            display: none;
+        }
+
         .buttons button {
             margin: 10px;
         }
+
         .main_square {
             margin: 0 auto;
         }
@@ -51,10 +56,11 @@
     <div class="state">
         <div id="state_caption">Состояние игры</div>
         <div id="state_move"></div>
+        <button id="button_new_game">Новая игра</button>
         <div class="buttons">
-        <button data-button_play="person">Начать игру с другом</button>
-        <button data-button_play="bot_cross">Начать игру с ботом (крестики)</button>
-        <button data-button_play="bot_nou">Начать игру с ботом (нолики)</button>
+            <button data-button_play="person">Начать игру с другом</button>
+            <button data-button_play="bot_cross">Начать игру с ботом (крестики)</button>
+            <button data-button_play="bot_nou">Начать игру с ботом (нолики)</button>
     </div>
     </div>
 
@@ -98,39 +104,37 @@
             }
 
             if (this.gameState === Game.STATE_MOVE_CROSS) {
-                    this.gamefield[x][y] = Cell.CROSS;
-                    $('tr:eq( ' + y + ')').find('td:eq(' + x + ')').html('x');
+                this.gamefield[x][y] = Cell.CROSS;
+                $('tr:eq( ' + y + ')').find('td:eq(' + x + ')').html('x');
+                this.gameState = Game.STATE_MOVE_NOU;
+                if (this.isWin(Cell.CROSS)) {
+                    this.gameState = Game.STATE_WIN_CROSS;
+                } else if (this.isAvailableTurns()) {
                     this.gameState = Game.STATE_MOVE_NOU;
-                    if (this.isWin(Cell.CROSS)) {
-                        this.gameState = Game.STATE_WIN_CROSS;
-                    } else if (this.isAvailableTurns()) {
-                        this.gameState = Game.STATE_MOVE_NOU;
-                        if (this.gameOption === Game.OPTION_PLAY_BOT_NOU) {
-                            let coords = this.findRandomEmptyCell();
-                            this.userMove(coords.x, coords.y);
-                        }
-                    } else {
-                        this.gameState = Game.STATE_DRAW;
+                    if (this.gameOption === Game.OPTION_PLAY_BOT_NOU) {
+                        let coords = this.findRandomEmptyCell();
+                        this.userMove(coords.x, coords.y);
                     }
-
+                } else {
+                    this.gameState = Game.STATE_DRAW;
+                }
             }
             else if (this.gameState === Game.STATE_MOVE_NOU) {
-                    this.gamefield[x][y] = Cell.NOU;
-                    $('tr:eq( ' + y + ')').find('td:eq(' + x + ')').html('0');
+                this.gamefield[x][y] = Cell.NOU;
+                $('tr:eq( ' + y + ')').find('td:eq(' + x + ')').html('0');
+                this.gameState = Game.STATE_MOVE_CROSS;
+                if (this.isWin(Cell.NOU)) {
+                    this.gameState = Game.STATE_WIN_NOU
+                } else if (this.isAvailableTurns()) {
                     this.gameState = Game.STATE_MOVE_CROSS;
-                    if (this.isWin(Cell.NOU)) {
-                        this.gameState = Game.STATE_WIN_NOU
-                    } else if (this.isAvailableTurns()) {
-                        this.gameState = Game.STATE_MOVE_CROSS;
-                        if (this.gameOption === Game.OPTION_PLAY_BOT_CROSS) {
-                            let coords = this.findRandomEmptyCell();
-                            this.userMove(coords.x, coords.y);
-                        }
-                    } else {
-                        this.gameState = Game.STATE_DRAW;
+                    if (this.gameOption === Game.OPTION_PLAY_BOT_CROSS) {
+                        let coords = this.findRandomEmptyCell();
+                        this.userMove(coords.x, coords.y);
                     }
+                } else {
+                    this.gameState = Game.STATE_DRAW;
+                }
             }
-
 
             let state = $('#state_move');
             switch (this.gameState) {
@@ -150,6 +154,14 @@
                     state.text('Ничья');
                     break;
             }
+
+            switch (this.gameState) {
+                case Game.STATE_WIN_CROSS:
+                case Game.STATE_WIN_NOU:
+                case Game.STATE_DRAW:
+                    $('#button_new_game').show();
+                    break;
+            }
         }
 
         getCellContent(x, y) {
@@ -159,7 +171,7 @@
         isWin(state) {
             for (let i = 0; i < 3; i++) {
                 if (this.gamefield[0][i] === state && this.gamefield[1][i] === state && this.gamefield[2][i] === state) {
-                return true;
+                    return true;
                 }
             }
 
@@ -191,19 +203,19 @@
 
         findRandomEmptyCell() {
             let x, y;
-           do {
-               x = this.findRandomNumber();
-               y = this.findRandomNumber();
-           } while (this.getCellContent(x, y) !== Cell.EMPTY);
+            do {
+                x = this.findRandomNumber();
+                y = this.findRandomNumber();
+            } while (this.getCellContent(x, y) !== Cell.EMPTY);
             return {'x': x, 'y': y};
-            }
+        }
 
         findRandomNumber() {
-                let min = 0;
-                let max = 2;
-                let rand = min + Math.random() * (max + 1 - min);
-                rand = Math.floor(rand);
-                return rand;
+            let min = 0;
+            let max = 2;
+            let rand = min + Math.random() * (max + 1 - min);
+            rand = Math.floor(rand);
+            return rand;
         }
     }
 
@@ -227,9 +239,10 @@
     Game.OPTION_PLAY_BOT_NOU = 9; //состояние игры
 
     let game = new Game();
+    game = new Game();
 
-    $('.buttons > button').click(function(){
-        if(game.gameState === Game.STATE_BEFORE_START) {
+    $('.buttons > button').click(function () {
+        if (game.gameState === Game.STATE_BEFORE_START) {
             switch ($(this).attr('data-button_play')) {
                 case 'person':
                     game.gameOption = Game.OPTION_PLAY_PERSON;
@@ -246,21 +259,18 @@
                     game.gameState = Game.STATE_MOVE_CROSS;
                     break;
             }
+
         }
         $('.buttons').hide();
     });
 
-        $('td').click(function () {
-        if(game.gameState !== Game.STATE_BEFORE_START) {
-                let x = $(this).index();
-                let y = $(this).parent('tr').index();
-                game.userMove(x, y);
-            }
-        });
-
-
-
-
+    $('td').click(function () {
+        if (game.gameState !== Game.STATE_BEFORE_START) {
+            let x = $(this).index();
+            let y = $(this).parent('tr').index();
+            game.userMove(x, y);
+        }
+    });
 
 
 </script>
