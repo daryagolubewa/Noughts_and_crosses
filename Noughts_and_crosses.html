@@ -29,6 +29,7 @@
 
         #button_new_game {
             display: none;
+            margin: 10px;
         }
 
         .buttons button {
@@ -239,7 +240,6 @@
     Game.OPTION_PLAY_BOT_NOU = 9; //состояние игры
 
     let game = new Game();
-    game = new Game();
 
     $('.buttons > button').click(function () {
         if (game.gameState === Game.STATE_BEFORE_START) {
@@ -270,6 +270,14 @@
             let y = $(this).parent('tr').index();
             game.userMove(x, y);
         }
+    });
+
+    $('#button_new_game').click(function(){
+        game = new Game();
+        $('td').html('');
+        $('#button_new_game').hide();
+        $('.buttons').show();
+        $('#state_move').html('');
     });
 
 
